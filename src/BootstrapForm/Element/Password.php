@@ -15,5 +15,13 @@ namespace BootstrapForm\Element;
  */
 class Password extends Text
 {
+    /**
+     * @var string
+     */
     protected $type = 'password';
+
+    /**
+     * @var string
+     */
+    protected $renderValueType = 'none';
 }

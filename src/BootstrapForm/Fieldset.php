@@ -45,8 +45,9 @@ class Fieldset extends Element\AbstractElement
             $el = $this->element($name);
             if(!$el) continue;
             if(is_array($value)) {
-                if(method_exists($el, 'populate'))
+                if(method_exists($el, 'populate')) {
                     $el->populate($value);
+                }
             }
             else {
                 $el->setValue($value);
@@ -63,13 +64,33 @@ class Fieldset extends Element\AbstractElement
         $values = array();
         foreach($this->elements as $name => $el) {
             $value = null;
-            if(method_exists($el, 'getValues')) {
+            if(method_exists($el, 'values')) {
                 $value = $el->values();
             }
             else {
                 $value = $el->value();
             }
             $values[$name] = $value;
+        }
+        return $values;
+    }
+
+    /**
+     * @param string $path
+     * @return mixed
+     */
+    public function value()
+    {
+        if(!func_num_args())
+            return false;
+        $path = func_get_arg(0);
+        $names = explode('.', $path);
+        $values = $this->values();
+        while(count($names) > 0) {
+            $name = array_shift($names);
+            if(!isset($values[$name]))
+                return null;
+            $values = $values[$name];
         }
         return $values;
     }
@@ -157,6 +178,32 @@ class Fieldset extends Element\AbstractElement
         if(isset($this->elements[$name]))
             return $this->elements[$name];
         return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function errors()
+    {
+        $errors = array();
+        foreach($this->elements as $name => $el) {
+            $errors[$name] = $el->errors();
+        }
+        return $errors;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isValid()
+    {
+        $valid = true;
+        foreach($this->elements as $name => $element) {
+            if(!$element->isValid()) {
+                $valid = false;
+            }
+        }
+        return $valid;
     }
 
     /**

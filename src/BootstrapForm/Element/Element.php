@@ -41,6 +41,16 @@ class Element extends AbstractElement
     protected $required = true;
 
     /**
+     * @var boolean
+     */
+    protected $renderErrors = true;
+
+    /**
+     * @var string
+     */
+    protected $helpBlock;
+
+    /**
      * @param boolean $skipControls
      * @return Element
      */
@@ -94,6 +104,24 @@ class Element extends AbstractElement
         return $this->required;
     }
 
+    /**
+     * @param string $helpBlock
+     * @return Element
+     */
+    public function setHelpBlock($helpBlock)
+    {
+        $this->helpBlock = (string) $helpBlock;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function helpBlock()
+    {
+        return $this->helpBlock;
+    }
+
 
     /**
      * @return string
@@ -104,6 +132,12 @@ class Element extends AbstractElement
 
         $output = '';
 
+        $subClass = '';
+        if($this->renderErrors && $this->hasErrors()) {
+            $subClass = ' error';
+            $this->setHelpBlock('@todo ERRORS');
+        }
+
         if($this->skipControls) {
             $output .= $this->renderElement();
         }
@@ -111,12 +145,22 @@ class Element extends AbstractElement
             if($this->label())
                 $output .= $this->renderLabel();
 
-            $output .= sprintf('<div class="controls">%s</div>', $this->renderElement());
+            $output .= sprintf('<div class="controls">%s%s</div>', $this->renderElement(), $this->renderHelpBlock());
 
-            $output = sprintf('<div class="control-group">%s</div>', $output);
+            $output = sprintf('<div class="control-group%s">%s</div>', $subClass, $output);
         }
 
         return $output;
+    }
+
+    /**
+     * @return string
+     */
+    public function renderHelpBlock()
+    {
+        if(!$this->helpBlock())
+            return '';
+        return sprintf('<p class="help-block">%s</p>', $this->helpBlock());
     }
 
     /**
@@ -126,4 +170,5 @@ class Element extends AbstractElement
     {
         return sprintf('<label for="%s" class="control-label">%s</label>', $this->attrib('id'), $this->label());
     }
+
 }

@@ -64,6 +64,16 @@ abstract class AbstractElement
     protected $size;
 
     /**
+     * @var array
+     */
+    protected $validators = array();
+
+    /**
+     * @var array
+     */
+    protected $errors = array();
+
+    /**
      * @param string $name
      * @param array $options
      */
@@ -252,6 +262,86 @@ abstract class AbstractElement
     public function size()
     {
         return $this->size;
+    }
+
+    /**
+     * @param array $validators
+     * @return AbstractElement
+     */
+    public function setValidators(array $validators)
+    {
+        $this->validators = array();
+        $this->addValidators($validators);
+        return $this;
+    }
+
+    /**
+     * @param array $validators
+     * @return AbstractElement
+     */
+    public function addValidators(array $validators)
+    {
+        foreach($validators as $validator)
+            $this->addValidator($validator);
+        return $this;
+    }
+
+    /**
+     * @param $validator
+     * @return AbstractElement
+     */
+    public function addValidator($validator)
+    {
+        $this->validators[] = $validator;
+        return $this;
+    }
+
+    /**
+     * @todo add translation here
+     * @param string $errorCode
+     * @return AbstractElement
+     */
+    public function setError($errorCode)
+    {
+        $this->errors[$errorCode] = $errorCode;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function hasErrors()
+    {
+        return is_array($this->errors) && count($this->errors());
+    }
+
+    /**
+     * @return array
+     */
+    public function errors()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isValid()
+    {
+        $this->errors = array();
+        $context = array();
+        if(($parent = $this->parent()) instanceof Fieldset) {
+            $context = $parent->values();
+        }
+        foreach($this->validators as $validator) {
+            if(!$validator->isValid($this->value(), $context)) {
+                $errors = array_keys($validator->getMessages());
+                foreach($errors as $error)
+                    $this->setError($error);
+                return false;
+            }
+        }
+        return true;
     }
 
     abstract public function render();
