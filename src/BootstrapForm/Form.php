@@ -33,7 +33,12 @@ class Form extends Fieldset
     /**
      * @var boolean
      */
-    protected $horizontal = false;
+    protected $isHorizontal = false;
+
+    /**
+     * @var boolean
+     */
+    protected $isSearch = false;
 
     /**
      * @param array $options
@@ -94,16 +99,34 @@ class Form extends Fieldset
      */
     public function setHorizontal($horizontal)
     {
-        $this->horizontal = (boolean) $horizontal;
+        $this->isHorizontal = (boolean) $horizontal;
         return $this;
     }
 
     /**
      * @return boolean
      */
-    public function horizontal()
+    public function isHorizontal()
     {
-        return $this->horizontal;
+        return $this->isHorizontal;
+    }
+
+    /**
+     * @param boolean $search
+     * @return Form
+     */
+    public function setSearch($search)
+    {
+        $this->isSearch = (boolean) $search;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSearch()
+    {
+        return $this->isSearch;
     }
 
     /**
@@ -128,8 +151,12 @@ class Form extends Fieldset
      */
     public function renderClasses()
     {
-        if($this->horizontal()) {
+        if($this->isHorizontal()) {
             $this->setClass('form-horizontal');
+        }
+
+        if($this->isSearch()) {
+            $this->setClass('form-search');
         }
 
         return parent::renderClasses();

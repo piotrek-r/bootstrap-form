@@ -272,8 +272,12 @@ abstract class AbstractElement
 
         $output .= '>';
 
+        $output .= $this->renderHelperPre();
+
         if('content' === $this->renderValueType)
             $output .= $this->value();
+
+        $output .= $this->renderHelperPost();
 
         if($this->renderClosingTag)
             $output .= '</' . $this->tag() . '>';
@@ -300,6 +304,26 @@ abstract class AbstractElement
         if(count($classes)) {
             return static::renderAttrib('class', implode(' ', $classes)) . ' ';
         }
+        return '';
+    }
+
+    /**
+     * Append string on begging of inside the tag.
+     *
+     * This function can be used in extending classes.
+     */
+    public function renderHelperPre()
+    {
+        return '';
+    }
+
+    /**
+     * Append string in the end of inside the tag.
+     *
+     * This function can be used in extending classes.
+     */
+    public function renderHelperPost()
+    {
         return '';
     }
 

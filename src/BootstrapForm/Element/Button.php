@@ -46,6 +46,17 @@ class Button extends InputAbstract
     protected $skipControls = true;
 
     /**
+     * @param string $name
+     * @param array|string $options This can also be a value (text) of the button
+     */
+    function __construct($name, $options = array())
+    {
+        if(is_string($options))
+            $options = array('label' => $options);
+        parent::__construct($name, $options);
+    }
+
+    /**
      * @param string $version
      * @return Button
      */
@@ -63,10 +74,30 @@ class Button extends InputAbstract
         return $this->version;
     }
 
+    public function renderHelperPre()
+    {
+        return $this->label();
+    }
+
     public function render()
     {
         return parent::render();
     }
+
+    /**
+     * @return AbstractElement|Button
+     */
+    protected function rebuildId()
+    {
+        parent::rebuildId();
+
+        $value = $this->value();
+        if(empty($value))
+            unset($this->attribs['name']);
+
+        return $this;
+    }
+
 
     public function renderClasses()
     {

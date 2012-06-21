@@ -36,6 +36,29 @@ class Element extends AbstractElement
     protected $label;
 
     /**
+     * @var boolean
+     */
+    protected $required = true;
+
+    /**
+     * @param boolean $skipControls
+     * @return Element
+     */
+    public function setSkipControls($skipControls)
+    {
+        $this->skipControls = (boolean) $skipControls;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function skipControls()
+    {
+        return $this->skipControls;
+    }
+
+    /**
      * @param string $label
      * @return Element
      */
@@ -52,6 +75,25 @@ class Element extends AbstractElement
     {
         return $this->label;
     }
+
+    /**
+     * @param boolean $required
+     * @return Element
+     */
+    public function setRequired($required)
+    {
+        $this->required = $required;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function required()
+    {
+        return $this->required;
+    }
+
 
     /**
      * @return string

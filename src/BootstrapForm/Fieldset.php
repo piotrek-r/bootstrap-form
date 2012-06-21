@@ -36,6 +36,45 @@ class Fieldset extends Element\AbstractElement
     protected $parent;
 
     /**
+     * @param array $values
+     * @return Fieldset
+     */
+    public function populate(array $values)
+    {
+        foreach($values as $name => $value) {
+            $el = $this->element($name);
+            if(!$el) continue;
+            if(is_array($value)) {
+                if(method_exists($el, 'populate'))
+                    $el->populate($value);
+            }
+            else {
+                $el->setValue($value);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function values()
+    {
+        $values = array();
+        foreach($this->elements as $name => $el) {
+            $value = null;
+            if(method_exists($el, 'getValues')) {
+                $value = $el->values();
+            }
+            else {
+                $value = $el->value();
+            }
+            $values[$name] = $value;
+        }
+        return $values;
+    }
+
+    /**
      * @param string $legend
      * @return Fieldset
      */
@@ -107,6 +146,17 @@ class Fieldset extends Element\AbstractElement
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return \BootstrapForm\Element\AbstractElement
+     */
+    public function element($name)
+    {
+        if(isset($this->elements[$name]))
+            return $this->elements[$name];
+        return null;
     }
 
     /**
