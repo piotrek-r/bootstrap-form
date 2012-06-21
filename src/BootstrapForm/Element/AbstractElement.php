@@ -29,6 +29,11 @@ abstract class AbstractElement
     protected $tag = 'input';
 
     /**
+     * @var array
+     */
+    protected $classes = array();
+
+    /**
      * @var \BootstrapForm\Form
      */
     protected $parent;
@@ -117,6 +122,46 @@ abstract class AbstractElement
     }
 
     /**
+     * @param array $classes
+     * @return AbstractElement
+     */
+    public function setClasses($classes)
+    {
+        foreach($classes as $class)
+            $this->setClass($class);
+        return $this;
+    }
+
+    /**
+     * @param string $class
+     * @return AbstractElement
+     */
+    public function setClass($class)
+    {
+        $this->classes[$class] = $class;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function classes()
+    {
+        return $this->classes;
+    }
+
+    /**
+     * @param string $class
+     * @return mixed
+     */
+    public function getClass($class)
+    {
+        if(isset($this->classes[$class]))
+            return $this->classes[$class];
+        return null;
+    }
+
+    /**
      * @param AbstractElement $parent
      * @return AbstractElement
      */
@@ -193,6 +238,8 @@ abstract class AbstractElement
      */
     public function render()
     {
+        $this->rebuildId();
+
         $output = sprintf('%s<div class="controls">%s</div>',
                         $this->renderLabel(),
                         $this->renderElement());
@@ -229,7 +276,19 @@ abstract class AbstractElement
      */
     public function renderLabel()
     {
-        return sprintf('<label for="%s" class="control-label">%s</label>', $this->name(), 'xxx');
+        return sprintf('<label for="%s" class="control-label">%s</label>', $this->attrib('id'), 'xxx');
+    }
+
+    /**
+     * @return string
+     */
+    public function renderClasses()
+    {
+        $classes = $this->classes();
+        if(count($classes)) {
+            return static::renderAttrib('class', implode(' ', $classes)) . ' ';
+        }
+        return '';
     }
 
     /**
@@ -254,23 +313,38 @@ abstract class AbstractElement
         return sprintf('%s="%s"', $name, $value);
     }
 
+    /**
+     * @return AbstractElement
+     */
     protected function rebuildId()
     {
         $parts = array();
 
         $name = $this->name();
+        $element = $this;
+
         do {
-            $parts[] = $name;
+            array_unshift($parts, $name);
 
-            $parent = $this->parent();
-            if(!$parent || $parent instanceof Form)
-                break;
-
-            $name = $parent->name();
+            $element = $element->parent();
+            if($element && !$element instanceof Form) {
+                $name = $element->name();
+            }
+            else {
+                $name = null;
+            }
         }
         while($name);
 
         $this->setAttrib('id', implode('_', $parts));
+
+        $elName = array_shift($parts);
+        while(count($parts)) {
+            $elName .= '[' . array_shift($parts) . ']';
+        }
+        $this->setAttrib('name', $elName);
+
+        return $this;
     }
 
     /**

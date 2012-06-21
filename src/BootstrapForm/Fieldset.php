@@ -87,6 +87,8 @@ class Fieldset extends Element\AbstractElement
 
         $element->setParent($this);
 
+        \Slim::getInstance()->getLog()->debug(__METHOD__ . ' ' . $this->name() . ' / ' . $element->name());
+
         $this->elements[$name] = $element;
 
         return $this;

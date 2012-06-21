@@ -2,18 +2,18 @@
 /**
  * Created by JetBrains PhpStorm.
  * User: piotrek
- * Date: 6/20/12
- * Time: 11:55 PM
+ * Date: 6/21/12
+ * Time: 8:04 AM
  */
 
 namespace BootstrapForm\Element;
 
 /**
- * Text input field
+ * Password input field
  *
  * @author Piotr Rybałtowski <piotrek@rybaltowski.pl>
  */
-class Text extends InputAbstract
+class Password extends Text
 {
-
+    protected $type = 'password';
 }

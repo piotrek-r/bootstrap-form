@@ -47,4 +47,14 @@ abstract class InputAbstract extends AbstractElement
     {
         return $this->type;
     }
+
+    /**
+     * @return string
+     */
+    public function render()
+    {
+        $this->setAttrib('type', $this->type());
+
+        return parent::render();
+    }
 }

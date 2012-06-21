@@ -31,6 +31,11 @@ class Form extends Fieldset
     protected $buttons = array();
 
     /**
+     * @var boolean
+     */
+    protected $horizontal = false;
+
+    /**
      * @param array $options
      */
     public function __construct($options = array())
@@ -40,6 +45,7 @@ class Form extends Fieldset
 
     /**
      * @param string $method
+     * @return Form
      */
     public function setMethod($method)
     {
@@ -89,11 +95,33 @@ class Form extends Fieldset
     }
 
     /**
+     * @param boolean $horizontal
+     * @return Form
+     */
+    public function setHorizontal($horizontal)
+    {
+        $this->horizontal = (boolean) $horizontal;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function horizontal()
+    {
+        return $this->horizontal;
+    }
+
+    /**
      * @return string
      */
     public function render()
     {
-        $output = sprintf('<form action="%s" method="%s">', $this->action(), $this->method());
+        if($this->horizontal()) {
+            $this->setClass('form-horizontal');
+        }
+
+        $output = sprintf('<form action="%s" method="%s" %s>', $this->action(), $this->method(), $this->renderClasses());
 
         foreach($this->elements as $name => $element)
             $output .= $element->render();
@@ -102,4 +130,5 @@ class Form extends Fieldset
 
         return $output;
     }
+
 }
