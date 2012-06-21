@@ -18,6 +18,16 @@ use BootstrapForm\Fieldset;
  */
 abstract class AbstractElement
 {
+    const SIZE_NUMERIC_MIN = 1;
+    const SIZE_NUMERIC_MAX = 12;
+
+    const SIZE_MINI = 'mini';
+    const SIZE_SMALL = 'small';
+    const SIZE_MEDIUM = 'medium';
+    const SIZE_LARGE = 'large';
+    const SIZE_XLARGE = 'xlarge';
+    const SIZE_XXLARGE = 'xxlarge';
+
     /**
      * @var string
      */
@@ -44,19 +54,14 @@ abstract class AbstractElement
     protected $attribs = array();
 
     /**
-     * @var string
-     */
-    protected $renderValueType = 'content';
-
-    /**
-     * @var boolean
-     */
-    protected $renderClosingTag = true;
-
-    /**
      * @var mixed
      */
     protected $value;
+
+    /**
+     * @var string|int
+     */
+    protected $size;
 
     /**
      * @param string $name
@@ -232,20 +237,24 @@ abstract class AbstractElement
     }
 
     /**
-     * Default render action for form elements. Can be overridden in extending classes.
-     *
-     * @return string
+     * @param int|string $size
+     * @return AbstractElement
      */
-    public function render()
+    public function setSize($size)
     {
-        $this->rebuildId();
-
-        $output = sprintf('%s<div class="controls">%s</div>',
-                        $this->renderLabel(),
-                        $this->renderElement());
-
-        return sprintf('<div class="control-group">%s</div>', $output);
+        $this->size = $size;
+        return $this;
     }
+
+    /**
+     * @return int|string
+     */
+    public function size()
+    {
+        return $this->size;
+    }
+
+    abstract public function render();
 
     /**
      * @return string
@@ -258,6 +267,8 @@ abstract class AbstractElement
 
         if('attrib' === $this->renderValueType)
             $output .= static::renderAttrib('value', $this->value());
+
+        $output .= $this->renderClasses();
 
         $output .= '>';
 
@@ -272,18 +283,19 @@ abstract class AbstractElement
 
     /**
      * @return string
-     * @todo Exchange xxx to something more useful
-     */
-    public function renderLabel()
-    {
-        return sprintf('<label for="%s" class="control-label">%s</label>', $this->attrib('id'), 'xxx');
-    }
-
-    /**
-     * @return string
      */
     public function renderClasses()
     {
+        $size = $this->size();
+        if($size) {
+            if(is_numeric($size) && $size >= self::SIZE_NUMERIC_MIN && $size <= self::SIZE_NUMERIC_MAX) {
+                $this->setClass('span' . $size);
+            }
+            else {
+                $this->setClass('input-' . $size);
+            }
+        }
+
         $classes = $this->classes();
         if(count($classes)) {
             return static::renderAttrib('class', implode(' ', $classes)) . ' ';

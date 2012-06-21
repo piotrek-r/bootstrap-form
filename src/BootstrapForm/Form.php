@@ -79,18 +79,12 @@ class Form extends Fieldset
     }
 
     /**
-     * @param string $label
-     * @param string $type
-     * @param string $level
+     * @param Element\Button button
      * @return Form
      */
-    public function addButton($label, $type = 'submit', $level = 'primary')
+    public function addButton(Element\Button $button)
     {
-        $this->buttons[] = array(
-            'label' => $label,
-            'type'  => $type,
-            'level' => $level,
-        );
+        $this->buttons[] = $button;
         return $this;
     }
 
@@ -117,18 +111,44 @@ class Form extends Fieldset
      */
     public function render()
     {
-        if($this->horizontal()) {
-            $this->setClass('form-horizontal');
-        }
-
         $output = sprintf('<form action="%s" method="%s" %s>', $this->action(), $this->method(), $this->renderClasses());
 
         foreach($this->elements as $name => $element)
             $output .= $element->render();
 
+        $output .= $this->renderFormActions();
+
         $output .= '</form>';
 
         return $output;
     }
+
+    /**
+     * @return string
+     */
+    public function renderClasses()
+    {
+        if($this->horizontal()) {
+            $this->setClass('form-horizontal');
+        }
+
+        return parent::renderClasses();
+    }
+
+    /**
+     * @return string
+     */
+    public function renderFormActions()
+    {
+        $output = '';
+        if(count($this->buttons)) {
+            foreach($this->buttons as $button) {
+                $output .= $button;
+            }
+            $output = sprintf('<div class="form-actions">%s</div>', $output);
+        }
+        return $output;
+    }
+
 
 }

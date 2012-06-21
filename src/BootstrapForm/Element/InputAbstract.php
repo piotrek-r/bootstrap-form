@@ -13,7 +13,7 @@ namespace BootstrapForm\Element;
  *
  * @author Piotr Rybałtowski <piotrek@rybaltowski.pl>
  */
-abstract class InputAbstract extends AbstractElement
+abstract class InputAbstract extends Element
 {
     /**
      * @var string
