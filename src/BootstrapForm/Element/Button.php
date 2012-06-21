@@ -15,6 +15,14 @@ namespace BootstrapForm\Element;
  */
 class Button extends InputAbstract
 {
+    const VERSION_PRIMARY = 'primary';
+    const VERSION_INFO = 'info';
+    const VERSION_SUCCESS = 'success';
+    const VERSION_WARNING = 'warning';
+    const VERSION_DANGER = 'danger';
+    const VERSION_INVERSE = 'inversse';
+    const VERSION_PLAIN = 'plain'; // no style is defined in LESS
+
     /**
      * @var string
      */
@@ -28,7 +36,7 @@ class Button extends InputAbstract
     /**
      * @var string
      */
-    protected $version = 'primary';
+    protected $version = self::VERSION_PRIMARY;
 
     /**
      * @var string
@@ -102,6 +110,11 @@ class Button extends InputAbstract
     public function renderClasses()
     {
         $this->setClass('btn');
+        foreach($this->classes as $class) {
+            if('btn-' === substr($class, 0, 4)) {
+                unset($this->classes[$class]);
+            }
+        }
         $this->setClass('btn-' . $this->version());
 
         return parent::renderClasses();
