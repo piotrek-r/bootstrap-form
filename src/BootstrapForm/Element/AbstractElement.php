@@ -297,6 +297,17 @@ abstract class AbstractElement
     }
 
     /**
+     * @param int $index
+     * @return \Zend\Validator\AbstractValidator
+     */
+    public function getValidatorByIndex($index)
+    {
+        if(isset($this->validators[$index]))
+            return $this->validators[$index];
+        return null;
+    }
+
+    /**
      * @todo add translation here
      * @param string $errorCode
      * @return AbstractElement
